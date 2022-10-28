@@ -16,17 +16,17 @@ public class Shift {
     private LocalTime shiftStart, shiftStop, lunchStart, lunchStop;
     
     
-    public Shift(HashMap<String, String > parameters ) {
-        this.id = Integer.parseInt(parameters.get("id"));
-        this.description = parameters.get("description");
-        this.shiftStart = LocalTime.parse(parameters.get("shiftstart"));
-        this.shiftStop = LocalTime.parse(parameters.get("shiftstop"));
-        this.roundInterval = Integer.parseInt(parameters.get("roundinterval"));
-        this.gracePeriod = Integer.parseInt(parameters.get("graceperiod"));
-        this.dockPenalty = Integer.parseInt(parameters.get("dockpenalty"));
-        this.lunchStart = LocalTime.parse(parameters.get("lunchstart"));
-        this.lunchStop = LocalTime.parse(parameters.get("lunchstop"));
-        this.lunchThreshold = Integer.parseInt(parameters.get("lunchthreshold"));    
+    public Shift(HashMap<String, String > map ) {
+        this.id = Integer.parseInt(map.get("id"));
+        this.description = map.get("description");
+        this.shiftStart = LocalTime.parse(map.get("shiftstart"));
+        this.shiftStop = LocalTime.parse(map.get("shiftstop"));
+        this.roundInterval = Integer.parseInt(map.get("roundinterval"));
+        this.gracePeriod = Integer.parseInt(map.get("graceperiod"));
+        this.dockPenalty = Integer.parseInt(map.get("dockpenalty"));
+        this.lunchStart = LocalTime.parse(map.get("lunchstart"));
+        this.lunchStop = LocalTime.parse(map.get("lunchstop"));
+        this.lunchThreshold = Integer.parseInt(map.get("lunchthreshold"));    
         this.lunchDuration = (int)Duration.between(this.lunchStart, this.lunchStop).toMinutes();
         this.shiftDuration = (int)Duration.between(this.shiftStart, this.shiftStop).toMinutes();
          
