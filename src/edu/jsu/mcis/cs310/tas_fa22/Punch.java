@@ -1,6 +1,7 @@
 package edu.jsu.mcis.cs310.tas_fa22;
 
  import java.time.LocalDateTime;
+ import java.time.*;
  import java.sql.*;
  import java.time.LocalTime;
  import java.time.format.DateTimeFormatter;
@@ -76,4 +77,13 @@ public class Punch {
         return badge;
     }
   
+    public void adjust(Shift s){
+        
+        
+        
+        
+        
+        
+    }
+    
 }
