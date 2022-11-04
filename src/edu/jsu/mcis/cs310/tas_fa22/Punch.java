@@ -49,7 +49,6 @@ public class Punch {
         
         int WeekDay;
         boolean Weekend;
-        
         WeekDay = this.getOriginaltimestamp().getDayOfWeek().getValue();
         originalLocalTime = this.getOriginaltimestamp().toLocalTime();
         Weekend = (WeekDay == 6 || WeekDay == 7);
@@ -156,7 +155,6 @@ public class Punch {
         
         int Seconds;
         int Minutes;
-        
         Seconds = this.getOriginaltimestamp().getSecond();
         Minutes = (Seconds >= 30) ? this.getOriginaltimestamp().plusMinutes(1).getMinute() : this.getOriginaltimestamp().getMinute();
 
