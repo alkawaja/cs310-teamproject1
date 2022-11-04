@@ -32,7 +32,7 @@ public class Punch {
     }
 
     public void adjust(Shift s) {
-        
+        //initialize variables in scope;
         LocalTime originalLocalTime;
         LocalTime Grace;
         LocalTime IntervalBeforeShift;
