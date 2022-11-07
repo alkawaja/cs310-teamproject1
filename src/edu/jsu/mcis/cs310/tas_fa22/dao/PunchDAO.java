@@ -1,17 +1,25 @@
 package edu.jsu.mcis.cs310.tas_fa22.dao;
 
-import edu.jsu.mcis.cs310.tas_fa22.Badge;
-import edu.jsu.mcis.cs310.tas_fa22.Department;
-import edu.jsu.mcis.cs310.tas_fa22.Punch;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.jsu.mcis.cs310.tas_fa22.Badge;
+import edu.jsu.mcis.cs310.tas_fa22.Department;
+import edu.jsu.mcis.cs310.tas_fa22.EventType;
+import edu.jsu.mcis.cs310.tas_fa22.Punch;
+
 public class PunchDAO {
 
     private static final String QUERY_ID = "SELECT * FROM event WHERE id = ?;";
+    private static final String GET_ALL_PUNCHES_BY_BADGE_AND_DATE = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? ORDER BY timestamp DESC;";
+    private static final String GET_ALL_PUNCHES_BY_BADGE_FOR_FOLLOWING_DAY = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? AND eventtypeid = ? OR eventtypeid = ? ORDER BY timestamp ASC LIMIT 1;";
     private static final String SQL_INSERT = "INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)";
     private HashMap<String, String> map = new HashMap<>();
     private DAOFactory daofactory = null;
@@ -73,7 +81,91 @@ public class PunchDAO {
     }
 
     public ArrayList<Punch> list(Badge b, LocalDate toLocalDate) {
-        return null;
+
+        Punch p = null;
+        PreparedStatement todayPS = null;
+        ResultSet RS = null;
+        Timestamp timestamp = Timestamp.valueOf(toLocalDate.atStartOfDay());
+        ArrayList<Punch> punches = new ArrayList<>();
+
+        // Following day calculations
+        Punch followingDayPunch = null;
+        LocalDate followingDay = toLocalDate.plusDays(1);
+        PreparedStatement followingDayPS = null;
+
+        try {
+            Connection conn = daofactory.getConnection();
+
+            if (conn.isValid(0)) {
+                todayPS = conn.prepareStatement(GET_ALL_PUNCHES_BY_BADGE_AND_DATE);
+                todayPS.setString(1, b.getId());
+                todayPS.setTimestamp(2, timestamp);
+
+                followingDayPS = conn.prepareStatement(GET_ALL_PUNCHES_BY_BADGE_FOR_FOLLOWING_DAY);
+                followingDayPS.setString(1, b.getId());
+                followingDayPS.setTimestamp(2, Timestamp.valueOf(followingDay.atStartOfDay()));
+                followingDayPS.setObject(3, EventType.CLOCK_OUT);
+                followingDayPS.setObject(3, EventType.TIME_OUT);
+
+                boolean nexDayHasResults = followingDayPS.execute();
+
+                boolean hasresults = todayPS.execute();
+
+                if (hasresults) {
+                    RS = todayPS.getResultSet();
+
+                    while (RS.next()) {
+
+                        map.put("id", RS.getString("id"));
+                        map.put("terminalid", RS.getString("terminalid"));
+                        map.put("badgeid", RS.getString("badgeid"));
+                        map.put("timestamp", RS.getString("timestamp"));
+                        map.put("eventtypeid", RS.getString("eventtypeid"));
+                        Badge badge = badgeDAO.find(RS.getString("badgeid"));
+                        p = new Punch(map, badge); // shift class using HashMap constructor
+                        // add the punch to the punches list
+                        punches.add(p);
+                    }
+                }
+
+                // this block get the first punch from the following day and LIMITs to 1 if it
+                // is available
+                if (nexDayHasResults) {
+                    RS = followingDayPS.getResultSet();
+
+                    while (RS.next()) {
+
+                        map.put("id", RS.getString("id"));
+                        map.put("terminalid", RS.getString("terminalid"));
+                        map.put("badgeid", RS.getString("badgeid"));
+                        map.put("timestamp", RS.getString("timestamp"));
+                        map.put("eventtypeid", RS.getString("eventtypeid"));
+                        Badge badge = badgeDAO.find(RS.getString("badgeid"));
+                        p = new Punch(map, badge); // shift class using HashMap constructor
+                        // add the punch to the punches list
+                        punches.add(p);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (RS != null) {
+                try {
+                    RS.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (todayPS != null) {
+                try {
+                    todayPS.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+        return punches;
     }
 
     public int create(Punch p1) {
@@ -93,7 +185,6 @@ public class PunchDAO {
             pst.setString(2, p1.getBadgeid());
             pst.setString(3, p1.getOriginaltimestamp().toString());
             pst.setInt(4, p1.getEventtypeid());
-
 
             int rows = pst.executeUpdate();
 
