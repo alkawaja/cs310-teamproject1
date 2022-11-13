@@ -41,14 +41,13 @@ public class EmployeeDAO {
                         ShiftDAO shiftDAO = new ShiftDAO(daoFactory);
                         DepartmentDAO departmentDAO = new DepartmentDAO(daoFactory);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
                         String firstname = RS.getString("firstname");
                         String middlename = RS.getString("middlename");
                         String lastname = RS.getString("lastname");
                         LocalDateTime active = LocalDateTime.parse(RS.getString("active"), formatter);
                         Badge badge = badgeDAO.find(RS.getString("badge"));
                         Department department = departmentDAO.find(RS.getInt("department"));
-                        Shift shift = shiftDAO.find(badge);
+                        Shift shift = shiftDAO.find(RS.getInt("shift"));
                         EmployeeType employeeType = RS.getInt('employeetype');
 
                         employee = new Employee (id, firstname, middlename, lastname, active, badge, department, shift, employeeType);
