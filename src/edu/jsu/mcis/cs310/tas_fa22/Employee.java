@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa22;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import edu.jsu.mcis.cs310.tas_fa22.EmployeeType;
 
 /**
  *
@@ -14,7 +15,7 @@ public class Employee {
     private final Badge badge;
     private final Department department;
     private final Shift shift;
-    private final employeeType employeeType;
+    private final EmployeeType employeeType;
 
     public Employee(Integer id, String firstname, String middlename, String lastname, LocalDateTime active, Badge badge, Department department, Shift shift, EmployeeType employeeType) {
         this.id = id;
@@ -60,7 +61,7 @@ public class Employee {
         return shift;
     }
 
-    public employeeType getEmployeeType() {
+    public EmployeeType getEmployeeType() {
         return employeeType;
     }
     @Override
