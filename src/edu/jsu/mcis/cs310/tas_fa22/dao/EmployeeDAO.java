@@ -95,13 +95,11 @@ public class EmployeeDAO {
                         ShiftDAO shiftDAO = new ShiftDAO(daoFactory);
                         DepartmentDAO departmentDAO = new DepartmentDAO(daoFactory);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
                         int id = RS.getInt("id");
                         String firstname = RS.getString("firstname");
                         String middlename = RS.getString("middlename");
                         String lastname = RS.getString("lastname");
                         LocalDateTime active = LocalDateTime.parse(RS.getString("active"), formatter);
-
                         Department department = departmentDAO.find(RS.getInt("department"));
                         Shift shift = shiftDAO.find(RS.getInt("shift"));
 
