@@ -30,7 +30,7 @@ public class Department {
 
     @Override
     public String toString() {
-        return "Department{" + "ID: " + id + description + ", Terminal ID: " + terminalid + '}';
+        return "#" + id + " (" + description + ")" + ", Terminal ID: " + terminalid;
     }
     
 }
