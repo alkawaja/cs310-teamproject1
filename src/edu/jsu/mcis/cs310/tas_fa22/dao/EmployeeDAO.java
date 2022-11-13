@@ -87,11 +87,9 @@ public class EmployeeDAO {
 
                 PS = conn.prepareStatement(QUERY_FIND_BADGE);
                 PS.setString(1, badge.getId());
-
                 boolean results = PS.execute();
 
                 if (results) {
-
                     RS = PS.getResultSet();
 
                     while (RS.next()) {
