@@ -48,6 +48,10 @@ public final class DAOFactory {
         return new DepartmentDAO(this);
     }
     
+    public EmployeeDAO getEmployeeDAO() {
+        return new EmployeeDAO(this);
+    }
+    
     public AbsenteeismDAO getAbsenteeismDAO() {
         return new AbsenteeismDAO(this);
     }
